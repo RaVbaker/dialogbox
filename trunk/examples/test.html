@@ -1,0 +1,24 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>testing TipBox</title>
+	<script src="./prototype.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./effects.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../dialogbox.js" type="text/javascript" charset="utf-8"></script>
+	
+	<link rel="stylesheet" href="../dialogbox.css" type="text/css" media="screen" title="no title" charset="utf-8">
+	
+	</script>
+</head>
+
+<body>
+<h1> Testy biblioteki DialogBox</h1>
+<a href="#" onclick='new DialogBox("Czy aby na pewno?", "Pytanie...", {ajax_init:false, submit_url:"ajax.html", ok_callback: function(){}});'>pokaz</a>
+<br />
+<a href="#" onclick='DialogBox.info("Test boksu informacyjnego", "Dialogbox.info");'>pokaz info</a>
+<br /><a href="#" onclick='DialogBox.alert("Test boksu alert", "Dialogbox.alert");'>pokaz alert</a>
+<br /><a href="#" onclick='DialogBox.confirm("Test boksu potwierdzajacego", "Dialogbox.confirm", function(ev){ Event.stop(ev);alert("kliknieto OK"); });'>pokaz confirm</a>
+</body>
+</html>
