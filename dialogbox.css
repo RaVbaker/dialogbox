@@ -23,7 +23,6 @@ div.DialogBox {
 div.DialogBox h4 {
   padding: 8px 14px;
   margin: 0;
-  cursor: move;
   
   border-bottom: 1px solid #ccc;
   font-family: Arial, sans-serif;

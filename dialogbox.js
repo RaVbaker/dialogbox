@@ -92,27 +92,55 @@ var DialogBox = Class.create({
 			'id': 'dialogBoxWrapper'
 		});
 		
+		
+		
 		if($('dialogBoxWrapper')) {
 			$('dialogBoxWrapper').remove();
 		}
 		
-		$$('body').first().insert({bottom: DialogBox.wrapper});
+		$$('body').first().insert({top: DialogBox.wrapper});
 
 		DialogBox.wrapper.setStyle({
-			'position': Prototype.Browser.ie?'absolute':'fixed',
-			'top':'0',
-			'left': '0',
+			'position': 'fixed',
+			'top':'0px',
+			'left': '0px',
 			'width':'100%',
 			'height': '100%',
 			'backgroundColor': '#000',
 			'zIndex': 9998,
+			'margin': 0,
+			'padding': 0,			
 			'opacity': 0.0
 		});
+		
 		if(typeof DialogBox.wrapper.appear === 'function') {
 			DialogBox.wrapper.appear({to:0.4});
 		}
 		else {
 			DialogBox.wrapper.setStyle({opacity: 0.4});
+		}
+		
+		//IE fixes
+		if (Prototype.Browser.IE) {
+			
+			var setPosition = function() {
+				DialogBox.wrapper.setStyle({top: document.viewport.getScrollOffsets().top+"px"});
+			}
+			
+			setPosition();
+			
+			DialogBox.wrapper.setStyle({
+				'position': 'absolute',
+				'width': document.viewport.getWidth()+'px',
+				'height': document.viewport.getHeight()+'px'
+			});
+			
+			var onScroll = function() {
+				setPosition();
+			}
+			
+			window.attachEvent('onresize', onScroll.bind(this));
+			window.attachEvent('onscroll', onScroll.bind(this));
 		}
 		
 	},
@@ -126,13 +154,15 @@ var DialogBox = Class.create({
 	  left = dimesions.width/2 - (parseInt(this.el.getStyle('width'))/2);
 
 	  var styles = {};
+	  
 	  if(Prototype.Browser.IE) {
 	    styles['position'] = 'absolute';
-	    styles['top'] += document.viewport.getScrollOffsets().top;
+	    top += document.viewport.getScrollOffsets().top;
 	  }
 	  else {
 	    styles['position'] = 'fixed';
 	  }
+	
 	  styles['top'] = top+'px';
       styles['left'] = left+'px';
     
@@ -175,7 +205,20 @@ var DialogBox = Class.create({
 		this.onSubmitAjaxResults();
 		
 		if(this.opts['standalone'] != true && typeof(Draggable) !== 'undefined') {
-			new Draggable(this.el, {'handle': this.el.down('h4')});
+			var handler = this.el.down('h4');
+			new Draggable(this.el, {'handle': handler});
+			handler.setStyle({cursor: 'move'});
+		}
+		
+		//onscroll move window
+		if(Prototype.Browser.IE) {
+			
+			var onScroll = function() {
+				this.setPosition();
+			}
+			
+			window.attachEvent('onresize', onScroll.bind(this));
+			window.attachEvent('onscroll', onScroll.bind(this));
 		}
  	},
  	
@@ -183,7 +226,9 @@ var DialogBox = Class.create({
 		form.observe('submit', function(ev){
 		  
 			var form = Event.element(ev);
-			this.makeRequest(form['action'], form.getElements())
+			if(form.action !== '') {
+				this.makeRequest(form.action, form.getElements());
+			}
 
 			Event.stop(ev);
 			return false;
@@ -222,16 +267,17 @@ var DialogBox = Class.create({
 DialogBox.alert = function(url, title, opts) {
 	var modeOpts = {
 		ajax_init: false, 
-		ok_callback: function(ev){Event.stop(ev); this.close(); }, 
+		ok_callback: function(ev){Event.stop(ev); this.close();}, 
 		cancel_enable: false
 	}
 	
 	var opts = opts || {};
 	
-	for(var i in modeOpts) {
-		opts[i] = modeOpts[i];
+	for(var i in opts) {
+		modeOpts[i] = opts[i];
 	}
-	return new DialogBox(url, title, opts);
+
+	return new DialogBox(url, title, modeOpts);
 };
 
 DialogBox.info = function(url, title, opts) {
@@ -242,11 +288,11 @@ DialogBox.info = function(url, title, opts) {
 	
 	var opts = opts || {};
 	
-	for(var i in modeOpts) {
-		opts[i] = modeOpts[i];
+	for(var i in opts) {
+		modeOpts[i] = opts[i];
 	}
 	
-	return new DialogBox(url, title, opts);
+	return new DialogBox(url, title, modeOpts);
 };
 
 DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
@@ -263,11 +309,11 @@ DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
 	
 	var opts = opts || {};
 	
-	for(var i in modeOpts) {
-		opts[i] = modeOpts[i];
+	for(var i in opts) {
+		modeOpts[i] = opts[i];
 	}
 	
-	return new DialogBox(url, title, opts);
+	return new DialogBox(url, title, modeOpts);
 };
 
 DialogBox.code = '<div id="#{id}" class="#{classNames} DialogBox" style="width: 450px"><a title="Zamknij" class="closeButton" href="#" >x</a><h4>#{title}</h4><form action="#{submit_url}" method="#{method}" class="DialogBoxSubmit"><div class="DialogBoxContent">#{content}</div><div class="DialogBoxActions"><input type="submit" value="#{ok_value}" class="Done" /> <input type="reset" value="#{cancel_value}" class="Cancel"/></div></form></div>';
