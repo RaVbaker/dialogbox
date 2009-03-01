@@ -203,22 +203,22 @@ var DialogBox = Class.create({
 		this.attachCallbacks();
 		this.submitAjaxedForm($(this.el).down('form'));
 		this.onSubmitAjaxResults();
-		
+		                                             
 		if(this.opts['standalone'] != true && typeof(Draggable) !== 'undefined') {
 			var handler = this.el.down('h4');
 			new Draggable(this.el, {'handle': handler});
 			handler.setStyle({cursor: 'move'});
 		}
+
+		var onScroll = function() {
+			this.setPosition();
+		}	  
+		
+		Event.observe(window, 'resize', onScroll.bind(this));
 		
 		//onscroll move window
 		if(Prototype.Browser.IE) {
-			
-			var onScroll = function() {
-				this.setPosition();
-			}
-			
-			window.attachEvent('onresize', onScroll.bind(this));
-			window.attachEvent('onscroll', onScroll.bind(this));
+				window.attachEvent('onscroll', onScroll.bind(this));
 		}
  	},
  	
@@ -316,4 +316,4 @@ DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
 	return new DialogBox(url, title, modeOpts);
 };
 
-DialogBox.code = '<div id="#{id}" class="#{classNames} DialogBox" style="width: 450px"><a title="Zamknij" class="closeButton" href="#" >x</a><h4>#{title}</h4><form action="#{submit_url}" method="#{method}" class="DialogBoxSubmit"><div class="DialogBoxContent">#{content}</div><div class="DialogBoxActions"><input type="submit" value="#{ok_value}" class="Done" /> <input type="reset" value="#{cancel_value}" class="Cancel"/></div></form></div>';
+DialogBox.code = '<div id="#{id}" class="#{classNames} DialogBox"><a title="Zamknij" class="closeButton" href="#" >x</a><h4>#{title}</h4><form action="#{submit_url}" method="#{method}" class="DialogBoxSubmit"><div class="DialogBoxContent">#{content}</div><div class="DialogBoxActions"><input type="submit" value="#{ok_value}" class="Done" /> <input type="reset" value="#{cancel_value}" class="Cancel"/></div></form></div>';
