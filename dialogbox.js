@@ -20,8 +20,7 @@ var DialogBox = Class.create({
       effects_enable:   true,
       standalone:       false,
       ajax_init:        true,
-      on_ok_reload:     false,
-      ignore_detection: false
+      on_ok_reload:     false
     };
     
     this.opts['url']        = url || this.opts['url'];    
@@ -57,7 +56,7 @@ var DialogBox = Class.create({
   },     
   
   detectAjaxInit: function() {
-    if (this.opts['ajax_init'] === true && !this.opts['ignore_detection']) {
+    if (this.opts['ajax_init'] === true) {
       if (this.opts['submit_url'].indexOf(' ') !== -1 || this.opts['url'].indexOf(' ') !== -1) {
         this.opts['ajax_init'] = false;
         return;
