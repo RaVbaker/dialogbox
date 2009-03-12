@@ -1317,6 +1317,7 @@ Ajax.Request = Class.create(Ajax.Base, {
 
     try {
       (this.options['on' + state] || Prototype.emptyFunction)(response, response.headerJSON);
+
       Ajax.Responders.dispatch('on' + state, this, response, response.headerJSON);
     } catch (e) {
       this.dispatchException(e);
@@ -1524,6 +1525,9 @@ function $(element) {
 if (Prototype.BrowserFeatures.XPath) {
   document._getElementsByXPath = function(expression, parentElement) {
     var results = [];
+    
+    console.log(arguments);
+    
     var query = document.evaluate(expression, $(parentElement) || document,
       null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     for (var i = 0, length = query.snapshotLength; i < length; i++)
