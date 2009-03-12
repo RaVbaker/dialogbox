@@ -1,3 +1,4 @@
+
 var DialogBox = Class.create({
 	
 	initialize: function(url, title, opts) {
@@ -23,13 +24,13 @@ var DialogBox = Class.create({
       this.opts['url'] = url || this.opts['url'];
 	  this.opts['title'] = title || this.opts['title']; 
   	  this.opts['submit_url'] = this.opts['url'] || this.opts['submit_url'];
-	
+
 	  this.setOptions(opts);
-	  this.create();
 	  this.createWrapper();
-	
+      this.create();
+
 	  if(this.opts['ajax_init'] !== false) {
-	     this.makeRequest(this.opts['url']);
+         this.makeRequest(this.opts['url']);
 	  }
 	},
 	
@@ -51,13 +52,20 @@ var DialogBox = Class.create({
 		this.opts['id'] = 'msgTipBox_'+(new String($$('.DialogBox').length+1));
 
     	var box_output = box.evaluate(this.opts);
-    	$$('body').first().insert({bottom:box_output});
-		
+    	
+    	// fixes bug in IE6/7 where it's impossible to insert data into body element while it's not fully loaded
+    	if(Prototype.Browser.IE && !document.loaded) {
+    	    document.write(box_output);
+    	}
+    	else {
+    	    $(document.body).insert({bottom:box_output});
+    	}
+    	
 		this.el = $(this.opts['id']);
-		this.setPanes();
-		this.setVisibility();
-		this.setPosition();
-		this.attachEvents();
+        this.setPanes();
+        this.setVisibility();
+        this.setPosition();
+        this.attachEvents();
 		return this.el;
 	},
 	
@@ -92,13 +100,17 @@ var DialogBox = Class.create({
 			'id': 'dialogBoxWrapper'
 		});
 		
-		
-		
 		if($('dialogBoxWrapper')) {
 			$('dialogBoxWrapper').remove();
 		}
 		
-		$$('body').first().insert({top: DialogBox.wrapper});
+		// fixes bug in IE6/7 where it's impossible to insert data into body element while it's not fully loaded
+    	if(Prototype.Browser.IE && !document.loaded) {
+    	    document.write(DialogBox.wrapper.inspect()+"&nbsp;</div>");
+    	}
+    	else {
+    	    $(document.body).insert({top:DialogBox.wrapper});
+    	}
 
 		DialogBox.wrapper.setStyle({
 			'position': 'fixed',
@@ -148,32 +160,39 @@ var DialogBox = Class.create({
 	setPosition: function() {
 	  
 	  var top = 0, left = 0;
-	  
-	  var dimesions = document.viewport.getDimensions();
-	  top = parseInt(dimesions.height/2) - 50;
-	  left = dimesions.width/2 - (parseInt(this.el.getStyle('width'))/2);
-
-	  var styles = {};
-	  
+	  var styles = {
+	      position: 'fixed'
+	  };
 	  if(Prototype.Browser.IE) {
 	    styles['position'] = 'absolute';
-	    top += document.viewport.getScrollOffsets().top;
 	  }
-	  else {
-	    styles['position'] = 'fixed';
+	  this.el.setStyle(styles);
+	  
+	  var dimesions = document.viewport.getDimensions();
+	  top = parseInt(dimesions.height/2) - (parseInt(this.el.getStyle('height'))/2);
+	  left = dimesions.width/2 - (parseInt(this.el.getStyle('width'))/2);
+	  
+	  if(Prototype.Browser.IE) {
+  	    top += document.viewport.getScrollOffsets().top;
 	  }
-	
+	  
 	  styles['top'] = top+'px';
       styles['left'] = left+'px';
     
 	  this.el.setStyle(styles);
 	},
 	
-	makeRequest: function(url, elements) {    
+	makeRequest: function(url, elements, is_click) {    
 
 	  var opts = {
 			method: this.opts['method'],
 			onComplete: function(req) {
+				if (this.opts['on_ok_reload'] === true && is_click === true) {
+				    this.update("Proszę czekać, trwa przeładowywanie strony");
+				    window.location.reload();
+				    return;
+				}
+				
 				this.content_pane.update(req.responseText);
 				this.onSubmitAjaxResults();
 			}.bind(this)
@@ -203,22 +222,22 @@ var DialogBox = Class.create({
 		this.attachCallbacks();
 		this.submitAjaxedForm($(this.el).down('form'));
 		this.onSubmitAjaxResults();
-		                                             
+		
 		if(this.opts['standalone'] != true && typeof(Draggable) !== 'undefined') {
 			var handler = this.el.down('h4');
 			new Draggable(this.el, {'handle': handler});
 			handler.setStyle({cursor: 'move'});
 		}
-
+		
 		var onScroll = function() {
 			this.setPosition();
-		}	  
+		}
 		
 		Event.observe(window, 'resize', onScroll.bind(this));
 		
 		//onscroll move window
 		if(Prototype.Browser.IE) {
-				window.attachEvent('onscroll', onScroll.bind(this));
+			window.attachEvent('onscroll', onScroll.bind(this));
 		}
  	},
  	
@@ -227,7 +246,7 @@ var DialogBox = Class.create({
 		  
 			var form = Event.element(ev);
 			if(form.action !== '') {
-				this.makeRequest(form.action, form.getElements());
+				this.makeRequest(form.action, form.getElements(), true);
 			}
 
 			Event.stop(ev);
@@ -280,6 +299,22 @@ DialogBox.alert = function(url, title, opts) {
 	return new DialogBox(url, title, modeOpts);
 };
 
+DialogBox.debug = function(content, opts) {
+	var modeOpts = {
+		ajax_init: false, 
+		ok_callback: function(ev){Event.stop(ev); this.close();}, 
+		cancel_enable: false
+	}
+	
+	var opts = opts || {};
+	
+	for(var i in opts) {
+		modeOpts[i] = opts[i];
+	}
+
+	return new DialogBox(content, 'Debug', modeOpts);
+};
+
 DialogBox.info = function(url, title, opts) {
 	var modeOpts = {
 		ajax_init: false, 
@@ -316,4 +351,4 @@ DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
 	return new DialogBox(url, title, modeOpts);
 };
 
-DialogBox.code = '<div id="#{id}" class="#{classNames} DialogBox"><a title="Zamknij" class="closeButton" href="#" >x</a><h4>#{title}</h4><form action="#{submit_url}" method="#{method}" class="DialogBoxSubmit"><div class="DialogBoxContent">#{content}</div><div class="DialogBoxActions"><input type="submit" value="#{ok_value}" class="Done" /> <input type="reset" value="#{cancel_value}" class="Cancel"/></div></form></div>';
+DialogBox.code = '<div id="#{id}" class="#{classNames} DialogBox" style="width: 450px"><a title="Zamknij" class="closeButton" href="#" >x</a><h4>#{title}</h4><form action="#{submit_url}" method="#{method}" class="DialogBoxSubmit"><div class="DialogBoxContent">#{content}</div><div class="DialogBoxActions"><input type="submit" value="#{ok_value}" class="Done" /> <input type="reset" value="#{cancel_value}" class="Cancel"/></div></form></div>';
