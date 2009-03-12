@@ -228,7 +228,7 @@ var DialogBox = Class.create({
       }.bind(this),
       
       onFailure: function(req){
-        this.update("Requested page doesn't exists");
+        this.update("Requested page is unavailable. Try again.");
       }.bind(this)
     };
     
