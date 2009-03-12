@@ -11,17 +11,28 @@ var DialogBox = Class.create({
 
       ok_value:         'OK',
       cancel_value:     'Cancel',
-      ok_callback:      function(){},
+      ok_callback:      Prototype.emptyFunction,
       cancel_callback:  function(){ this.close(); },
-      close_callback:   function(){},
+      close_callback:   Prototype.emptyFunction,
       cancel_enable:    true,
       ok_enable:        true,
       actions_enable:   true,
-      effects_enable:   true
+      effects_enable:   true,
+      standalone:       false,
+      ajax_init:        true,
+      on_ok_reload:     false,
+      ignore_detection: false
     };
     
-    this.opts['url']        = url || this.opts['url'];
-    this.opts['title']      = title || this.opts['title']; 
+    this.opts['url']        = url || this.opts['url'];    
+    
+    if (Object.isString(title)) {
+      this.opts['title']    = title || this.opts['title']; 
+    }                                                      
+    else if (!Object.isUndefined(title) && Object.isUndefined(opts)) {
+      opts = title;
+    }
+    
     this.opts['submit_url'] = this.opts['url'] || this.opts['submit_url'];
 
     this.setOptions(opts);
@@ -36,11 +47,29 @@ var DialogBox = Class.create({
   setOptions: function(new_opts) {
     for(var key in new_opts) {
       this.opts[key] = new_opts[key];
-    }
+    }                                      
+    this.detectAjaxInit();
     
     if (this.opts['ajax_init'] === false) {
       this.opts['content'] = this.opts['url'];
       this.opts['submit_url'] = '';
+    }
+  },     
+  
+  detectAjaxInit: function() {
+    if (this.opts['ajax_init'] === true && !this.opts['ignore_detection']) {
+      if (this.opts['submit_url'].indexOf(' ') !== -1 || this.opts['url'].indexOf(' ') !== -1) {
+        this.opts['ajax_init'] = false;
+        return;
+      }        
+      
+      if (this.opts['submit_url'].indexOf('http://') !== 0 
+          && this.opts['url'].indexOf('http://') !== 0
+          && this.opts['submit_url'].indexOf('/') !== 0 
+          && this.opts['url'].indexOf('/') !== 0) {
+        this.opts['ajax_init'] = false;
+        return;
+      }
     }
   },
   
@@ -196,13 +225,18 @@ var DialogBox = Class.create({
         }
         
         this.content_pane.update(req.responseText);
+      }.bind(this),
+      
+      onFailure: function(req){
+        this.update("Requested page doesn't exists");
       }.bind(this)
     };
     
     if (elements) {
       opts['parameters'] = Form.serializeElements(elements);
     }
-      new Ajax.Request(url, opts);
+    
+    new Ajax.Request(url, opts);
   },
     
   attachCallbacks: function() {
