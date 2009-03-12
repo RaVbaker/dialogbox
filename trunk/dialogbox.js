@@ -252,9 +252,11 @@ var DialogBox = Class.create({
   },
   
   attachEvents: function() {
-    this.closeButtonEventAttach();
+    this.closeButtonEventAttach();     
+    this.setFocus();
     this.attachCallbacks();
-    this.submitAjaxedForm(this.el.down('form'));
+    this.submitAjaxedForm(this.el.down('form'));    
+    this.attachESCKeyPress();
     
     if (this.opts['standalone'] !== true && !Object.isUndefined(Draggable)) {;
       new Draggable(this.el, {'handle': this.title_pane});
@@ -298,6 +300,24 @@ var DialogBox = Class.create({
     DialogBox.wrapper.observe('click', function(ev) {
       this.close();
     }.bind(this));
+  },  
+  
+  setFocus: function(){
+    if (Object.isElement(this.actions_pane.down('.Done'))) {
+      this.actions_pane.down('.Done').focus();
+    }                                         
+    else {
+      //unless - focus on form
+      this.el.down('form').focus();
+    }
+  },                          
+  
+  attachESCKeyPress: function(){
+    Event.observe(document, 'keyup', function(ev) {
+      if (ev.keyCode === Event.KEY_ESC) {
+        this.close();
+      } 
+    }.bind(this));
   },
   
   remove: function() {
@@ -307,20 +327,24 @@ var DialogBox = Class.create({
           this.el.remove();
         }.bind(this)
        });
-       
-      DialogBox.wrapper.fade({
-        afterFinish: function() {
-          DialogBox.wrapper.remove();
-        }.bind(this)
-      });
+      
+      if (Object.isElement(DialogBox.wrapper)) {
+        DialogBox.wrapper.fade({
+          afterFinish: function() {
+            DialogBox.wrapper.remove();
+          }.bind(this)
+        });
+      } 
     }
     else {
       this.el.remove();
-      DialogBox.wrapper.setStyle({
-        opacity: 0.0, 
-        display: 'none'
-      });
-      DialogBox.wrapper.remove();
+      if (Object.isElement(DialogBox.wrapper)) {
+        DialogBox.wrapper.setStyle({
+          opacity: 0.0, 
+          display: 'none'
+        });
+        DialogBox.wrapper.remove();
+      }
     }
   },
   
