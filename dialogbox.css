@@ -16,7 +16,8 @@ div.DialogBox {
   background:#FFFFFF none repeat scroll 0 0;
   
   padding: 0;
-  z-index: 9999;
+  z-index: 9999;                                
+  width: 450px;
 }
 
 
@@ -26,7 +27,7 @@ div.DialogBox h4 {
   
   border-bottom: 1px solid #ccc;
   font-family: Arial, sans-serif;
-  background-color: rgb(207, 30, 36);
+  background-color: #1E24CF;
   color: #fff;
 }
 
