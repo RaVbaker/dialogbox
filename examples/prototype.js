@@ -1524,10 +1524,7 @@ function $(element) {
 
 if (Prototype.BrowserFeatures.XPath) {
   document._getElementsByXPath = function(expression, parentElement) {
-    var results = [];
-    
-    console.log(arguments);
-    
+    var results = [];      
     var query = document.evaluate(expression, $(parentElement) || document,
       null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
     for (var i = 0, length = query.snapshotLength; i < length; i++)
