@@ -12,7 +12,7 @@ var DialogBox = Class.create({
       ok_value:         'OK',
       cancel_value:     'Cancel',
       ok_callback:      Prototype.emptyFunction,
-      cancel_callback:  function(){ this.close(); },
+      cancel_callback:  function() { this.close(); },
       close_callback:   Prototype.emptyFunction,
       cancel_enable:    true,
       ok_enable:        true,
@@ -44,7 +44,7 @@ var DialogBox = Class.create({
   },
   
   setOptions: function(new_opts) {
-    for(var key in new_opts) {
+    for (var key in new_opts) {
       this.opts[key] = new_opts[key];
     }                                      
     this.detectAjaxInit();
@@ -84,7 +84,9 @@ var DialogBox = Class.create({
       document.write(box_output);
     }
     else {
-      $(document.body).insert({bottom:box_output});
+      $(document.body).insert({
+        bottom:box_output
+      });
     }
       
     this.el = $(this.opts['id']);
@@ -137,7 +139,9 @@ var DialogBox = Class.create({
       document.write(DialogBox.wrapper.inspect()+"&nbsp;</div>");
     }
     else {
-      $(document.body).insert({top:DialogBox.wrapper});
+      $(document.body).insert({
+        top:DialogBox.wrapper
+      });
     }
 
     DialogBox.wrapper.setStyle({
@@ -154,10 +158,14 @@ var DialogBox = Class.create({
     });
     
     if (Object.isFunction(DialogBox.wrapper.appear) && this.opts['effects_enable']) {
-      DialogBox.wrapper.appear({to:0.4});
+      DialogBox.wrapper.appear({
+        to:0.4
+       });
     }
     else {
-      DialogBox.wrapper.setStyle({opacity: 0.4});
+      DialogBox.wrapper.setStyle({
+        opacity: 0.4
+      });
     }
     
     //IE fixes
@@ -226,7 +234,7 @@ var DialogBox = Class.create({
         this.content_pane.update(req.responseText);
       }.bind(this),
       
-      onFailure: function(req){
+      onFailure: function(req) {
         this.update("Requested page is unavailable. Try again.");
       }.bind(this)
     };
@@ -258,10 +266,14 @@ var DialogBox = Class.create({
     this.attachESCKeyPress();
     
     if (this.opts['standalone'] !== true && !Object.isUndefined(Draggable)) {;
-      new Draggable(this.el, {'handle': this.title_pane});
+      new Draggable(this.el, {
+        'handle': this.title_pane
+       });
       
       // change cursor if is draggable
-      this.title_pane.setStyle({cursor: 'move'});
+      this.title_pane.setStyle({
+        cursor: 'move'
+       });
     }
     
     var onScroll = function() {
@@ -277,7 +289,7 @@ var DialogBox = Class.create({
   },
   
   submitAjaxedForm: function(form) {    
-    form.observe('submit', function(ev){
+    form.observe('submit', function(ev) {
       var form = Event.element(ev);
       if (!form.action.empty()) {
         this.makeRequest(form.action, form.getElements(), true);
@@ -301,7 +313,7 @@ var DialogBox = Class.create({
     }.bind(this));
   },  
   
-  setFocus: function(){
+  setFocus: function() {
     if (Object.isElement(this.actions_pane.down('.Done'))) {
       this.actions_pane.down('.Done').focus();
     }                                         
@@ -311,7 +323,7 @@ var DialogBox = Class.create({
     }
   },                          
   
-  attachESCKeyPress: function(){
+  attachESCKeyPress: function() {
     Event.observe(document, 'keyup', function(ev) {
       if (ev.keyCode === Event.KEY_ESC) {
         this.close();
@@ -361,13 +373,13 @@ var DialogBox = Class.create({
 DialogBox.alert = function(url, title, opts) {
   var modeOpts = {
     ajax_init: false, 
-    ok_callback: function(ev){Event.stop(ev); this.close();}, 
+    ok_callback: function(ev) {Event.stop(ev); this.close();}, 
     cancel_enable: false
   }
   
   var opts = opts || {};
   
-  for(var i in opts) {
+  for (var i in opts) {
     modeOpts[i] = opts[i];
   }
 
@@ -378,13 +390,13 @@ DialogBox.debug = function(content, opts) {
   // @todo: multiple arguments and printf like form for first argument - just like console.log in Firebug
   var modeOpts = {
     ajax_init: false, 
-    ok_callback: function(ev){Event.stop(ev); this.close();}, 
+    ok_callback: function(ev) {Event.stop(ev); this.close();}, 
     cancel_enable: false
   }
   
   var opts = opts || {};
   
-  for(var i in opts) {
+  for (var i in opts) {
     modeOpts[i] = opts[i];
   }
 
@@ -399,7 +411,7 @@ DialogBox.info = function(url, title, opts) {
   
   var opts = opts || {};
   
-  for(var i in opts) {
+  for (var i in opts) {
     modeOpts[i] = opts[i];
   }
   
@@ -423,7 +435,7 @@ DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
   
   var opts = opts || {};
   
-  for(var i in opts) {
+  for (var i in opts) {
     modeOpts[i] = opts[i];
   }
   
