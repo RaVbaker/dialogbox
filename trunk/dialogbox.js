@@ -2,7 +2,7 @@ var DialogBox = Class.create({
   
   initialize: function(url, title, opts) {
     this.opts = {
-      title:            '&nbsp;',
+      title:            '',
       content:          'Loading...',
       classNames:       '',
       url:              '',
@@ -124,7 +124,7 @@ var DialogBox = Class.create({
     if (this.opts['actions_enable'] === false) {
       this.actions_pane.remove();
     }                 
-    if (this.opts['title'] === '&nbsp;') {
+    if (this.opts['title'].empty()) {
       this.title_pane.remove();   
       this.title_pane = undefined;
       this.el.down('.closeButton').addClassName('closeNoTitleButton'); 
