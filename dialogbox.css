@@ -44,6 +44,11 @@ div.DialogBox a.closeButton {
   font-size: 14px;
   text-align: center;
 }
+                      
+div.DialogBox a.closeNoTitleButton {
+  color: #bbb;
+  border-color: #bbb;
+}
 
 div.DialogBox div.DialogBoxContent {
   background-color: #fff;

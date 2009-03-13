@@ -123,6 +123,11 @@ var DialogBox = Class.create({
     }
     if (this.opts['actions_enable'] === false) {
       this.actions_pane.remove();
+    }                 
+    if (this.opts['title'] === '&nbsp;') {
+      this.title_pane.remove();   
+      this.title_pane = undefined;
+      this.el.down('.closeButton').addClassName('closeNoTitleButton'); 
     }
   },
   
@@ -268,13 +273,18 @@ var DialogBox = Class.create({
     this.submitAjaxedForm(this.el.down('form'));    
     this.attachESCKeyPress();
     
-    if (this.opts['standalone'] !== true && !Object.isUndefined(Draggable)) {;
+    if (this.opts['standalone'] !== true && !Object.isUndefined(Draggable)) {
+                                              
+      var draggable_handler = this.title_pane;
+      if (!Object.isElement(draggable_handler)) {
+        draggable_handler = this.el;
+      }    
       new Draggable(this.el, {
-        'handle': this.title_pane
+        'handle': draggable_handler
        });
       
       // change cursor if is draggable
-      this.title_pane.setStyle({
+      draggable_handler.setStyle({
         cursor: 'move'
        });
     }
@@ -303,11 +313,12 @@ var DialogBox = Class.create({
     }.bind(this));
   },                
   
-  closeButtonEventAttach: function() {
+  closeButtonEventAttach: function() {                                          
+    
     this.el.select('.closeButton').invoke('observe', 'click', function(ev) {
       Event.stop(ev);
       this.close();
-      this.opts['close_callback']();
+      this.opts['close_callback']();     
       return false;
     }.bind(this));
     

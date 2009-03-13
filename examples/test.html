@@ -23,8 +23,10 @@
 <a href="#" onclick='new DialogBox("Are you sure?", "Question...", {ajax_init:false, submit_url:"ajax.html", ok_callback: function(){alert("OK is clicked");}});'>show</a>
 <br />
 <a href="#" onclick='DialogBox.info("info box testing", "Dialogbox.info");'>show info</a>          
+<a href="#" onclick='DialogBox.info("info box testing");'>show info without title</a>   
 <a href="#" onclick='DialogBox.info("info box testing", "Dialogbox.info", {classNames: "wider"});'>show wider info</a>          
 <br /><a href="#" onclick='DialogBox.alert("alert() tests", "Dialogbox.alert");'>show alert</a>
+<br /><a href="#" onclick='DialogBox.alert("alert() tests");'>show alert without title</a>
 <br /><a href="#" onclick='DialogBox.alert("alert() tests", "Dialogbox.alert", {standalone: true});'>show standalone alert</a>
 <br /><a href="#" onclick='DialogBox.confirm("Test confirmable box", "Dialogbox.confirm", function(ev){ Event.stop(ev);alert("OK is clicked"); });'>show confirm box</a> 
 <br /><a href="#" onclick='DialogBox.confirm("Test confirmable box", "Dialogbox.confirm", function(ev){ Event.stop(ev);alert("OK is clicked"); }, {effects_enable: false});'>show confirm box without scriptaculous effects</a> 
