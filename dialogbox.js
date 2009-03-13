@@ -20,7 +20,8 @@ var DialogBox = Class.create({
       effects_enable:   true,
       standalone:       false,
       ajax_init:        true,
-      on_ok_reload:     false
+      on_ok_reload:     false,
+      show_wrapper:     true
     };
     
     this.opts['url']        = url || this.opts['url'];    
@@ -35,7 +36,9 @@ var DialogBox = Class.create({
     this.opts['submit_url'] = this.opts['url'] || this.opts['submit_url'];
 
     this.setOptions(opts);
-    this.createWrapper();
+    if (this.opts['show_wrapper']) {
+      this.createWrapper();
+    }
     this.create();
 
     if (this.opts['ajax_init'] !== false) {
@@ -308,9 +311,11 @@ var DialogBox = Class.create({
       return false;
     }.bind(this));
     
-    DialogBox.wrapper.observe('click', function(ev) {
-      this.close();
-    }.bind(this));
+    if (Object.isElement(DialogBox.wrapper)) {
+      DialogBox.wrapper.observe('click', function(ev) {
+        this.close();
+      }.bind(this));
+    }
   },  
   
   setFocus: function() {
