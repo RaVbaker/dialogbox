@@ -30,5 +30,10 @@
 <br /><a href="#" onclick='DialogBox.alert("alert() tests", "Dialogbox.alert", {standalone: true});'>show standalone alert</a>
 <br /><a href="#" onclick='DialogBox.confirm("Test confirmable box", "Dialogbox.confirm", function(ev){ Event.stop(ev);alert("OK is clicked"); });'>show confirm box</a> 
 <br /><a href="#" onclick='DialogBox.confirm("Test confirmable box", "Dialogbox.confirm", function(ev){ Event.stop(ev);alert("OK is clicked"); }, {effects_enable: false});'>show confirm box without scriptaculous effects</a> 
+<br /><a href="#" onclick='new DialogBox("my/url/to/ajax/file.html", "Very interesting information in my style", {classNames: "myDialogBoxStyleClass", on_ok_reload: true, cancel_enable: false, show_wrapper: false, ok_value: "Push me - Im a button!"});'>show my own window type</a> 
+
+<br /><a href="#" onclick='new DialogBox("http://www.google.com/intl/pl/images/translate_beta_res.gif", "Very interesting information in my style", {classNames: "myDialogBoxStyleClass", on_ok_reload: true, cancel_enable: false, show_wrapper: false, ok_value: "Push me - Im a button!"});'>show my own window type based on image</a> 
+
+
 </body>
 </html>

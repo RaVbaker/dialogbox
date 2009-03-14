@@ -19,7 +19,7 @@ var DialogBox = Class.create({
       actions_enable:   true,
       effects_enable:   true,
       standalone:       false,
-      ajax_init:        true,
+      type:             'auto', // more types: ajax, text, image
       on_ok_reload:     false,
       show_wrapper:     true
     };
@@ -40,9 +40,16 @@ var DialogBox = Class.create({
       this.createWrapper();
     }
     this.create();
-
-    if (this.opts['ajax_init'] !== false) {
+                                                                        
+    this.setSpecificContent();
+  },                          
+  
+  setSpecificContent: function() {
+    if (this.opts['type'] === 'ajax') {
       this.makeRequest(this.opts['url']);
+    }                              
+    else if (this.opts['type'] === 'image') {
+      this.update("<img src=\""+this.opts['url']+"\" alt=\"image\" />");
     }
   },
   
@@ -50,18 +57,18 @@ var DialogBox = Class.create({
     for (var key in new_opts) {
       this.opts[key] = new_opts[key];
     }                                      
-    this.detectAjaxInit();
+    this.detectType();
     
-    if (this.opts['ajax_init'] === false) {
+    if (this.opts['type'] === 'text') {
       this.opts['content'] = this.opts['url'];
       this.opts['submit_url'] = '';
     }
   },     
   
-  detectAjaxInit: function() {
-    if (this.opts['ajax_init'] === true) {
+  detectType: function() {
+    if (this.opts['type'] === 'auto') {
       if (this.opts['submit_url'].indexOf(' ') !== -1 || this.opts['url'].indexOf(' ') !== -1) {
-        this.opts['ajax_init'] = false;
+        this.opts['type'] = 'text';
         return;
       }        
       
@@ -69,9 +76,15 @@ var DialogBox = Class.create({
           && this.opts['url'].indexOf('http://') !== 0
           && this.opts['submit_url'].indexOf('/') !== 0 
           && this.opts['url'].indexOf('/') !== 0) {
-        this.opts['ajax_init'] = false;
+        this.opts['type'] = 'text';
         return;
-      }
+      }     
+      else if (/[^ ]+\.(jpg|jpeg|gif|png)/.test(this.opts['url'])) {
+        this.opts['type'] = 'image';
+        return;
+      }               
+      
+      this.opts['type'] = 'ajax';
     }
   },
   
@@ -388,7 +401,7 @@ var DialogBox = Class.create({
   */               
 DialogBox.alert = function(url, title, opts) {
   var modeOpts = {
-    ajax_init: false, 
+    type: 'text', 
     ok_callback: function(ev) {Event.stop(ev); this.close();}, 
     cancel_enable: false
   }
@@ -405,7 +418,7 @@ DialogBox.alert = function(url, title, opts) {
 DialogBox.debug = function(content, opts) {                                  
   // @todo: multiple arguments and printf like form for first argument - just like console.log in Firebug
   var modeOpts = {
-    ajax_init: false, 
+    type: 'text', 
     ok_callback: function(ev) {Event.stop(ev); this.close();}, 
     cancel_enable: false
   }
@@ -421,7 +434,7 @@ DialogBox.debug = function(content, opts) {
 
 DialogBox.info = function(url, title, opts) {
   var modeOpts = {
-    ajax_init: false, 
+    type: 'text', 
     actions_enable: false
   }
   
@@ -436,9 +449,15 @@ DialogBox.info = function(url, title, opts) {
 
 DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
   var modeOpts = {
-    ajax_init: false
-  }
+    type: 'text'
+  }                           
   
+  if (!Object.isString(title) && Object.isFunction(title)) {
+    opts = cancel_callback;
+    cancel_callback = ok_callback;
+    ok_callback = title;
+    title = "";
+  }
   if (Object.isFunction(ok_callback)) {
     modeOpts['ok_callback'] = ok_callback;
   }
