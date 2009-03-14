@@ -24,19 +24,19 @@ var DialogBox = Class.create({
       show_wrapper:     true
     };
     
-    this.opts['url']        = url || this.opts['url'];    
+    this.opts.url        = url || this.opts.url;    
     
     if (Object.isString(title)) {
-      this.opts['title']    = title || this.opts['title']; 
+      this.opts.title    = title || this.opts.title; 
     }                                                      
     else if (!Object.isUndefined(title) && Object.isUndefined(opts)) {
       opts = title;
     }
     
-    this.opts['submit_url'] = this.opts['url'] || this.opts['submit_url'];
+    this.opts.submit_url = this.opts.url || this.opts.submit_url;
 
     this.setOptions(opts);
-    if (this.opts['show_wrapper']) {
+    if (this.opts.show_wrapper) {
       this.createWrapper();
     }
     this.create();
@@ -45,53 +45,52 @@ var DialogBox = Class.create({
   },                          
   
   setSpecificContent: function() {
-    if (this.opts['type'] === 'ajax') {
-      this.makeRequest(this.opts['url']);
+    if (this.opts.type === 'ajax') {
+      this.makeRequest(this.opts.url);
     }                              
-    else if (this.opts['type'] === 'image') {
-      this.update("<img src=\""+this.opts['url']+"\" alt=\"image\" />");
+    else if (this.opts.type === 'image') {
+      this.update("<img src=\""+this.opts.url+"\" alt=\"image\" />");
     }
   },
   
   setOptions: function(new_opts) {
-    for (var key in new_opts) {
-      this.opts[key] = new_opts[key];
+    for (var key in new_opts) {           
+      if (new_opts.hasOwnProperty(key)) {
+        this.opts[key] = new_opts[key];
+      }
     }                                      
     this.detectType();
     
-    if (this.opts['type'] === 'text') {
-      this.opts['content'] = this.opts['url'];
-      this.opts['submit_url'] = '';
+    if (this.opts.type === 'text') {
+      this.opts.content = this.opts.url;
+      this.opts.submit_url = '';
     }
   },     
   
   detectType: function() {
-    if (this.opts['type'] === 'auto') {
-      if (this.opts['submit_url'].indexOf(' ') !== -1 || this.opts['url'].indexOf(' ') !== -1) {
-        this.opts['type'] = 'text';
+    if (this.opts.type === 'auto') {
+      if (this.opts.submit_url.indexOf(' ') !== -1 || this.opts.url.indexOf(' ') !== -1) {
+        this.opts.type = 'text';
         return;
       }        
       
-      if (this.opts['submit_url'].indexOf('http://') !== 0 
-          && this.opts['url'].indexOf('http://') !== 0
-          && this.opts['submit_url'].indexOf('/') !== 0 
-          && this.opts['url'].indexOf('/') !== 0) {
-        this.opts['type'] = 'text';
+      if (this.opts.submit_url.indexOf('http://') !== 0 && this.opts.url.indexOf('http://') !== 0 && this.opts.submit_url.indexOf('/') !== 0 && this.opts.url.indexOf('/') !== 0) {
+        this.opts.type = 'text';
         return;
       }     
-      else if (/^[^ ]+\.(jpg|jpeg|gif|png)$/.test(this.opts['url'])) {
-        this.opts['type'] = 'image';
+      else if (/^[^ ]+\.(jpg|jpeg|gif|png)$/.test(this.opts.url)) {
+        this.opts.type = 'image';
         return;
       }               
       
-      this.opts['type'] = 'ajax';
+      this.opts.type = 'ajax';
     }
   },
   
   create: function() {
     var box = new Template(DialogBox.code);
     
-    this.opts['id'] = 'msgTipBox_'+(new String($$('.DialogBox').length+1));
+    this.opts.id = 'msgTipBox_'+(String($$('.DialogBox').length+1));
 
     var box_output = box.evaluate(this.opts);
       
@@ -105,7 +104,7 @@ var DialogBox = Class.create({
       });
     }
       
-    this.el = $(this.opts['id']);
+    this.el = $(this.opts.id);
     this.setPanes();
     this.setVisibility();
     this.setPosition();
@@ -128,16 +127,16 @@ var DialogBox = Class.create({
   },
   
   setVisibility: function() {
-    if (this.opts['ok_enable'] === false) {
+    if (this.opts.ok_enable === false) {
       this.actions_pane.down('input.Done').remove();
     }
-    if (this.opts['cancel_enable'] === false) {
+    if (this.opts.cancel_enable === false) {
       this.actions_pane.down('input.Cancel').remove();
     }
-    if (this.opts['actions_enable'] === false) {
+    if (this.opts.actions_enable === false) {
       this.actions_pane.remove();
     }                 
-    if (this.opts['title'].empty()) {
+    if (this.opts.title.empty()) {
       this.title_pane.remove();   
       this.title_pane = undefined;
       this.el.down('.closeButton').addClassName('closeNoTitleButton'); 
@@ -153,7 +152,7 @@ var DialogBox = Class.create({
     if (existing_dialog_box_wrapper) {
       existing_dialog_box_wrapper.remove();
     }                                      
-    delete existing_dialog_box_wrapper;
+    existing_dialog_box_wrapper = undefined;
     
     // fixes bug in IE6/7 where it's impossible to insert data into body element while it's not fully loaded
     if (Prototype.Browser.IE && !document.loaded) {
@@ -178,7 +177,7 @@ var DialogBox = Class.create({
       'opacity':          0.0
     });
     
-    if (Object.isFunction(DialogBox.wrapper.appear) && this.opts['effects_enable']) {
+    if (Object.isFunction(DialogBox.wrapper.appear) && this.opts.effects_enable) {
       DialogBox.wrapper.appear({
         to:0.4
        });
@@ -195,7 +194,7 @@ var DialogBox = Class.create({
         DialogBox.wrapper.setStyle({
           top: document.viewport.getScrollOffsets().top+"px"
         });
-      }
+      };
       
       setPosition();
       
@@ -207,7 +206,7 @@ var DialogBox = Class.create({
       
       var onScroll = function() {
         setPosition();
-      }
+      };
       
       window.attachEvent('onresize', onScroll.bind(this));
       window.attachEvent('onscroll', onScroll.bind(this));
@@ -229,44 +228,44 @@ var DialogBox = Class.create({
     };
     
     if (Prototype.Browser.IE) {
-      styles['position'] = 'absolute';
+      styles.position = 'absolute';
     }
     
     this.el.setStyle(styles);
     
     var dimesions = document.viewport.getDimensions();    
     
-    var windowHeight = parseInt(this.el.getStyle('height'));
+    var windowHeight = parseInt(this.el.getStyle('height'), 10);
                                                           
     //fixes to dialogbox height
     if (windowHeight >= dimesions.height) {
-      var newContentHeight = parseInt(dimesions.height * 0.5);
+      var newContentHeight = parseInt(dimesions.height * 0.5, 10);
       this.content_pane.setStyle({
         height: newContentHeight+"px",
         overflow: "auto"
       });                
-      windowHeight = parseInt(this.el.getStyle('height'));
+      windowHeight = parseInt(this.el.getStyle('height'), 10);
     }
     
-    top = parseInt(dimesions.height/2) - (windowHeight/2);
-    left = dimesions.width/2 - (parseInt(this.el.getStyle('width'))/2);
+    top = parseInt(dimesions.height/2, 10) - (windowHeight/2);
+    left = dimesions.width/2 - (parseInt(this.el.getStyle('width'), 10)/2);
     
     if (Prototype.Browser.IE) {
         top += document.viewport.getScrollOffsets().top;
     }
     
-    styles['top'] = top+'px';
-    styles['left'] = left+'px';
+    styles.top = top+'px';
+    styles.left = left+'px';
     
     this.el.setStyle(styles);
   },
   
   makeRequest: function(url, elements, is_click) {    
     var opts = {
-      method: this.opts['method'],           
+      method: this.opts.method,           
       
       onComplete: function(req) {
-        if (this.opts['on_ok_reload'] === true && is_click === true) {
+        if (this.opts.on_ok_reload === true && is_click === true) {
             this.update("Please wait while reloading the page");
             window.location.reload();
             return;
@@ -281,10 +280,10 @@ var DialogBox = Class.create({
     };
     
     if (elements) {
-      opts['parameters'] = Form.serializeElements(elements);
+      opts.parameters = Form.serializeElements(elements);
     }
     
-    new Ajax.Request(url, opts);
+    var request = new Ajax.Request(url, opts);
   },
     
   attachCallbacks: function() {
@@ -292,10 +291,10 @@ var DialogBox = Class.create({
     var cancel_button = this.actions_pane.down('.Cancel');
     
     if (Object.isElement(ok_button)) {
-      ok_button.observe('click', this.opts['ok_callback'].bind(this));
+      ok_button.observe('click', this.opts.ok_callback.bind(this));
     }
     if (Object.isElement(cancel_button)) {
-      cancel_button.observe('click', this.opts['cancel_callback'].bind(this));
+      cancel_button.observe('click', this.opts.cancel_callback.bind(this));
     }
   },
   
@@ -306,13 +305,13 @@ var DialogBox = Class.create({
     this.submitAjaxedForm(this.el.down('form'));    
     this.attachESCKeyPress();
     
-    if (this.opts['standalone'] !== true && !Object.isUndefined(Draggable)) {
+    if (this.opts.standalone !== true && !Object.isUndefined(Draggable)) {
                                               
       var draggable_handler = this.title_pane;
       if (!Object.isElement(draggable_handler)) {
         draggable_handler = this.el;
       }    
-      new Draggable(this.el, {
+      var dragging = new Draggable(this.el, {
         'handle': draggable_handler
        });
       
@@ -324,7 +323,7 @@ var DialogBox = Class.create({
     
     var onScroll = function() {
       this.setPosition();
-    }
+    };
     
     Event.observe(window, 'resize', onScroll.bind(this));
     
@@ -351,7 +350,7 @@ var DialogBox = Class.create({
     this.el.select('.closeButton').invoke('observe', 'click', function(ev) {
       Event.stop(ev);
       this.close();
-      this.opts['close_callback']();     
+      this.opts.close_callback();     
       return false;
     }.bind(this));
     
@@ -381,7 +380,7 @@ var DialogBox = Class.create({
   },
   
   remove: function() {
-    if (!Object.isUndefined(this.el.fade) && this.opts['effects_enable']) {
+    if (!Object.isUndefined(this.el.fade) && this.opts.effects_enable) {
       this.el.fade({
         afterFinish: function() {
           this.el.remove();
@@ -424,12 +423,14 @@ DialogBox.alert = function(url, title, opts) {
     type: 'text', 
     ok_callback: function(ev) {Event.stop(ev); this.close();}, 
     cancel_enable: false
-  }
+  };
   
-  var opts = opts || {};
+  opts = opts || {};
   
-  for (var i in opts) {
-    modeOpts[i] = opts[i];
+  for (var i in opts) {     
+    if (opts.hasOwnProperty(i)) {
+      modeOpts[i] = opts[i];
+    }
   }
 
   return new DialogBox(url, title, modeOpts);
@@ -441,14 +442,15 @@ DialogBox.debug = function(content, opts) {
     type: 'text', 
     ok_callback: function(ev) {Event.stop(ev); this.close();}, 
     cancel_enable: false
-  }
+  };
   
-  var opts = opts || {};
+  opts = opts || {};
   
-  for (var i in opts) {
-    modeOpts[i] = opts[i];
+  for (var i in opts) {     
+    if (opts.hasOwnProperty(i)) {
+      modeOpts[i] = opts[i];
+    }
   }
-
   return new DialogBox(content, 'Debug', modeOpts);
 };
 
@@ -456,21 +458,23 @@ DialogBox.info = function(url, title, opts) {
   var modeOpts = {
     type: 'text', 
     actions_enable: false
+  };
+  
+  opts = opts || {};
+  
+  for (var i in opts) {     
+    if (opts.hasOwnProperty(i)) {
+      modeOpts[i] = opts[i];
+    }
   }
-  
-  var opts = opts || {};
-  
-  for (var i in opts) {
-    modeOpts[i] = opts[i];
-  }
-  
+    
   return new DialogBox(url, title, modeOpts);
 };
 
 DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
   var modeOpts = {
     type: 'text'
-  }                           
+  };                           
   
   if (!Object.isString(title) && Object.isFunction(title)) {
     opts = cancel_callback;
@@ -479,21 +483,23 @@ DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
     title = "";
   }
   if (Object.isFunction(ok_callback)) {
-    modeOpts['ok_callback'] = ok_callback;
+    modeOpts.ok_callback = ok_callback;
   }
   if (Object.isFunction(cancel_callback)) {
-    modeOpts['cancel_callback'] = cancel_callback;
+    modeOpts.cancel_callback = cancel_callback;
   }                    
   else if (!Object.isUndefined(cancel_callback) && Object.isUndefined(opts)) {
     opts = cancel_callback;
   }
   
-  var opts = opts || {};
+  opts = opts || {};
   
-  for (var i in opts) {
-    modeOpts[i] = opts[i];
+  for (var i in opts) {     
+    if (opts.hasOwnProperty(i)) {
+      modeOpts[i] = opts[i];
+    }
   }
-  
+    
   return new DialogBox(url, title, modeOpts);
 };
 
