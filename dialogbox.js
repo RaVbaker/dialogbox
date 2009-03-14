@@ -88,11 +88,11 @@ var DialogBox = Class.create({
   },
   
   create: function() {
-    var box = new Template(DialogBox.code);
+    var box, box_output;
     
+    box = new Template(DialogBox.code);
     this.opts.id = 'msgTipBox_'+(String($$('.DialogBox').length+1));
-
-    var box_output = box.evaluate(this.opts);
+    box_output = box.evaluate(this.opts);
       
     // fixes bug in IE6/7 where it's impossible to insert data into body element while it's not fully loaded
     if (Prototype.Browser.IE && !document.loaded) {
@@ -143,12 +143,14 @@ var DialogBox = Class.create({
     }
   },
   
-  createWrapper: function() {
+  createWrapper: function() {               
+    var setPosition, existing_dialog_box_wrapper, onScroll;
+    
     DialogBox.wrapper = new Element('div', {
       'id': 'dialogBoxWrapper'
     });
                    
-    var existing_dialog_box_wrapper = $('dialogBoxWrapper');
+    existing_dialog_box_wrapper = $('dialogBoxWrapper');
     if (existing_dialog_box_wrapper) {
       existing_dialog_box_wrapper.remove();
     }                                      
@@ -190,7 +192,7 @@ var DialogBox = Class.create({
     
     //IE fixes
     if (Prototype.Browser.IE) {
-      var setPosition = function() {
+      setPosition = function() {
         DialogBox.wrapper.setStyle({
           top: document.viewport.getScrollOffsets().top+"px"
         });
@@ -204,7 +206,7 @@ var DialogBox = Class.create({
         'height':     document.viewport.getHeight()+'px'
       });
       
-      var onScroll = function() {
+      onScroll = function() {
         setPosition();
       };
       
@@ -222,8 +224,8 @@ var DialogBox = Class.create({
       overflow: 'auto'
     });
 
-    var top = 0, left = 0;
-    var styles = {
+    var top = 0, left = 0, styles, dimesions, windowHeight, newContentHeight;
+    styles = {
         position: 'fixed'
     };
     
@@ -233,13 +235,13 @@ var DialogBox = Class.create({
     
     this.el.setStyle(styles);
     
-    var dimesions = document.viewport.getDimensions();    
+    dimesions = document.viewport.getDimensions();    
     
-    var windowHeight = parseInt(this.el.getStyle('height'), 10);
+    windowHeight = parseInt(this.el.getStyle('height'), 10);
                                                           
     //fixes to dialogbox height
     if (windowHeight >= dimesions.height) {
-      var newContentHeight = parseInt(dimesions.height * 0.5, 10);
+      newContentHeight = parseInt(dimesions.height * 0.5, 10);
       this.content_pane.setStyle({
         height: newContentHeight+"px",
         overflow: "auto"
@@ -261,7 +263,8 @@ var DialogBox = Class.create({
   },
   
   makeRequest: function(url, elements, is_click) {    
-    var opts = {
+    var opts, request;
+    opts = {
       method: this.opts.method,           
       
       onComplete: function(req) {
@@ -283,12 +286,13 @@ var DialogBox = Class.create({
       opts.parameters = Form.serializeElements(elements);
     }
     
-    var request = new Ajax.Request(url, opts);
+    request = new Ajax.Request(url, opts);
   },
     
   attachCallbacks: function() {
-    var ok_button = this.actions_pane.down('.Done');
-    var cancel_button = this.actions_pane.down('.Cancel');
+    var ok_button, cancel_button;
+    ok_button = this.actions_pane.down('.Done');
+    cancel_button = this.actions_pane.down('.Cancel');
     
     if (Object.isElement(ok_button)) {
       ok_button.observe('click', this.opts.ok_callback.bind(this));
@@ -298,7 +302,8 @@ var DialogBox = Class.create({
     }
   },
   
-  attachEvents: function() {
+  attachEvents: function() {          
+    var draggable_handler, dragging, onScroll;
     this.closeButtonEventAttach();     
     this.setFocus();
     this.attachCallbacks();
@@ -307,11 +312,11 @@ var DialogBox = Class.create({
     
     if (this.opts.standalone !== true && !Object.isUndefined(Draggable)) {
                                               
-      var draggable_handler = this.title_pane;
+      draggable_handler = this.title_pane;
       if (!Object.isElement(draggable_handler)) {
         draggable_handler = this.el;
       }    
-      var dragging = new Draggable(this.el, {
+      dragging = new Draggable(this.el, {
         'handle': draggable_handler
        });
       
@@ -321,7 +326,7 @@ var DialogBox = Class.create({
        });
     }
     
-    var onScroll = function() {
+    onScroll = function() {
       this.setPosition();
     };
     
@@ -419,7 +424,8 @@ var DialogBox = Class.create({
   * @todo: also prompt version of DialogBox needed
   */               
 DialogBox.alert = function(url, title, opts) {
-  var modeOpts = {
+  var modeOpts, i;
+  modeOpts = {
     type: 'text', 
     ok_callback: function(ev) {Event.stop(ev); this.close();}, 
     cancel_enable: false
@@ -427,7 +433,7 @@ DialogBox.alert = function(url, title, opts) {
   
   opts = opts || {};
   
-  for (var i in opts) {     
+  for (i in opts) {     
     if (opts.hasOwnProperty(i)) {
       modeOpts[i] = opts[i];
     }
@@ -438,7 +444,8 @@ DialogBox.alert = function(url, title, opts) {
 
 DialogBox.debug = function(content, opts) {                                  
   // @todo: multiple arguments and printf like form for first argument - just like console.log in Firebug
-  var modeOpts = {
+  var modeOpts, i;
+  modeOpts = {
     type: 'text', 
     ok_callback: function(ev) {Event.stop(ev); this.close();}, 
     cancel_enable: false
@@ -446,7 +453,7 @@ DialogBox.debug = function(content, opts) {
   
   opts = opts || {};
   
-  for (var i in opts) {     
+  for (i in opts) {     
     if (opts.hasOwnProperty(i)) {
       modeOpts[i] = opts[i];
     }
@@ -455,14 +462,15 @@ DialogBox.debug = function(content, opts) {
 };
 
 DialogBox.info = function(url, title, opts) {
-  var modeOpts = {
+  var modeOpts, i;
+  modeOpts = {
     type: 'text', 
     actions_enable: false
   };
   
   opts = opts || {};
   
-  for (var i in opts) {     
+  for (i in opts) {     
     if (opts.hasOwnProperty(i)) {
       modeOpts[i] = opts[i];
     }
@@ -472,7 +480,8 @@ DialogBox.info = function(url, title, opts) {
 };
 
 DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
-  var modeOpts = {
+  var modeOpts, i;
+  modeOpts = {
     type: 'text'
   };                           
   
@@ -494,7 +503,7 @@ DialogBox.confirm = function(url, title, ok_callback, cancel_callback, opts) {
   
   opts = opts || {};
   
-  for (var i in opts) {     
+  for (i in opts) {     
     if (opts.hasOwnProperty(i)) {
       modeOpts[i] = opts[i];
     }
