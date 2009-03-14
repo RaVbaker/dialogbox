@@ -79,7 +79,7 @@ var DialogBox = Class.create({
         this.opts['type'] = 'text';
         return;
       }     
-      else if (/[^ ]+\.(jpg|jpeg|gif|png)/.test(this.opts['url'])) {
+      else if (/^[^ ]+\.(jpg|jpeg|gif|png)$/.test(this.opts['url'])) {
         this.opts['type'] = 'image';
         return;
       }               
@@ -215,7 +215,14 @@ var DialogBox = Class.create({
     
   },
   
-  setPosition: function() {
+  setPosition: function() {     
+                 
+    // reset fixes for content_pane
+    this.content_pane.setStyle({
+      height: 'auto', 
+      overflow: 'auto'
+    });
+
     var top = 0, left = 0;
     var styles = {
         position: 'fixed'
@@ -227,8 +234,21 @@ var DialogBox = Class.create({
     
     this.el.setStyle(styles);
     
-    var dimesions = document.viewport.getDimensions();
-    top = parseInt(dimesions.height/2) - (parseInt(this.el.getStyle('height'))/2);
+    var dimesions = document.viewport.getDimensions();    
+    
+    var windowHeight = parseInt(this.el.getStyle('height'));
+                                                          
+    //fixes to dialogbox height
+    if (windowHeight >= dimesions.height) {
+      var newContentHeight = parseInt(dimesions.height * 0.5);
+      this.content_pane.setStyle({
+        height: newContentHeight+"px",
+        overflow: "auto"
+      });                
+      windowHeight = parseInt(this.el.getStyle('height'));
+    }
+    
+    top = parseInt(dimesions.height/2) - (windowHeight/2);
     left = dimesions.width/2 - (parseInt(this.el.getStyle('width'))/2);
     
     if (Prototype.Browser.IE) {
