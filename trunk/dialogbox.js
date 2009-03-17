@@ -21,7 +21,8 @@ var DialogBox = Class.create({
       standalone:       false,
       type:             'auto', // more types: ajax, text, image
       on_ok_reload:     false,
-      show_wrapper:     true
+      show_wrapper:     true, 
+      wrapper_clickable:true
     };
     
     this.opts.url        = url || this.opts.url;    
@@ -310,7 +311,7 @@ var DialogBox = Class.create({
     this.submitAjaxedForm(this.el.down('form'));    
     this.attachESCKeyPress();
     
-    if (this.opts.standalone !== true && !Object.isUndefined(Draggable)) {
+    if (this.opts.standalone !== true && typeof(Draggable) !== 'undefined') {
                                               
       draggable_handler = this.title_pane;
       if (!Object.isElement(draggable_handler)) {
@@ -359,7 +360,7 @@ var DialogBox = Class.create({
       return false;
     }.bind(this));
     
-    if (Object.isElement(DialogBox.wrapper)) {
+    if (this.opts.wrapper_clickable === true && Object.isElement(DialogBox.wrapper)) {
       DialogBox.wrapper.observe('click', function(ev) {
         this.close();
       }.bind(this));
