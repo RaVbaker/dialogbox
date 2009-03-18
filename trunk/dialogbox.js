@@ -22,7 +22,8 @@ var DialogBox = Class.create({
       type:             'auto', // more types: ajax, text, image
       on_ok_reload:     false,
       show_wrapper:     true, 
-      wrapper_clickable:true
+      wrapper_clickable:true,
+      after_load_callback:Prototype.emptyFunction
     };
     
     this.opts.url        = url || this.opts.url;    
@@ -110,6 +111,7 @@ var DialogBox = Class.create({
     this.setVisibility();
     this.setPosition();
     this.attachEvents();
+    this.opts.after_load_callback.bind(this)();
     
     return this.el;
   },
@@ -125,6 +127,8 @@ var DialogBox = Class.create({
     if (!not_hide_actions) {
       this.actions_pane.hide();
     }
+    this.opts.after_load_callback.bind(this)();
+    this.setPosition();
   },
   
   setVisibility: function() {
