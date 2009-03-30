@@ -1,0 +1,43 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>testing TipBox</title>
+	<script src="./prototype.js" type="text/javascript" charset="utf-8"></script>
+	<script src="./effects.js" type="text/javascript" charset="utf-8"></script>           
+	<script src="./dragdrop.js" type="text/javascript" charset="utf-8"></script>           
+	<script src="../dialogbox.js?1234" type="text/javascript" charset="utf-8"></script>
+	
+	<link rel="stylesheet" href="../dialogbox.css" type="text/css" media="screen" title="no title" charset="utf-8" />
+	
+	<style type="text/css" media="screen">
+		.wider {
+			width: 1000px !important;
+		}
+	</style>
+</head>
+
+<body>
+<h1> Tests for library DialogBox.js</h1>
+<a href="#" onclick='new DialogBox("Are you sure?", "Question...", {ajax_init:false, submit_url:"ajax.html", ok_callback: function(){alert("OK is clicked");}});'>show</a>
+<br />
+<a href="#" onclick='DialogBox.info("info box testing", "Dialogbox.info");'>show info</a>          
+<a href="#" onclick='DialogBox.info("info box testing");'>show info without title</a>   
+<a href="#" onclick='DialogBox.info("info box testing", "Dialogbox.info", {classNames: "wider"});'>show wider info</a>          
+<br /><a href="#" onclick='DialogBox.alert("alert() tests", "Dialogbox.alert");'>show alert</a>
+<br /><a href="#" onclick='DialogBox.alert("alert() tests");'>show alert without title</a>
+<br /><a href="#" onclick='DialogBox.alert("alert() tests", "Dialogbox.alert", {standalone: true});'>show standalone alert</a>
+<br /><a href="#" onclick='DialogBox.confirm("Test confirmable box", "Dialogbox.confirm", function(ev){ Event.stop(ev);alert("OK is clicked"); });'>show confirm box</a> 
+<br /><a href="#" onclick='DialogBox.confirm("Test confirmable box", "Dialogbox.confirm", function(ev){ Event.stop(ev);alert("OK is clicked"); }, {effects_enable: false});'>show confirm box without scriptaculous effects</a> 
+<br /><a href="#" onclick='new DialogBox("my/url/to/ajax/file.html", "Very interesting information in my style", {classNames: "myDialogBoxStyleClass", on_ok_reload: true, cancel_enable: false, show_wrapper: false, ok_value: "Push me - Im a button!"});'>show my own window type</a>                                                        
+
+
+
+<br /><a href="#" onclick='DialogBox.alert("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.", "Too high window");'>show too high window</a>
+
+<br /><a href="#" onclick='new DialogBox("http://www.google.com/intl/pl/images/translate_beta_res.gif", "Very interesting information in my style", {classNames: "myDialogBoxStyleClass", on_ok_reload: true, cancel_enable: false, show_wrapper: false, ok_value: "Push me - Im a button!"});'>show my own window type based on image</a> 
+
+
+</body>
+</html>
