@@ -1,0 +1,1 @@
+JavaScript library for creating simple windows on sites, using Prototype.
